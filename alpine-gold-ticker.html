@@ -8,9 +8,8 @@
   :root {
     --gold:       #C9A84C;
     --gold-dim:   #8A6D28;
-    --bg:         #0A0B0C;
     --text:       #EDE8DE;
-    --text-muted: #6B6558;
+    --text-muted: #A09880;
     --up:         #4CAF7A;
     --down:       #E05252;
   }
@@ -19,7 +18,7 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: var(--bg);
+    background: transparent;
   }
 
   .ticker-bar {
@@ -27,86 +26,54 @@
     height: 100%;
     display: flex;
     align-items: center;
-    border-top: 1px solid rgba(201,168,76,0.2);
+    justify-content: space-around;
+    padding: 0 20px;
     overflow: hidden;
-    position: relative;
   }
 
   .ticker-label {
     flex-shrink: 0;
-    padding: 0 24px;
-    height: 100%;
+    padding: 6px 20px;
     display: flex;
     align-items: center;
     background: var(--gold);
     font-family: 'Courier New', monospace;
-    font-size: 11px;
+    font-size: 14px;
     font-weight: 700;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--bg);
-    z-index: 2;
-  }
-
-  .ticker-fade {
-    position: absolute;
-    left: 108px; top: 0; bottom: 0;
-    width: 40px;
-    background: linear-gradient(to right, var(--bg), transparent);
-    z-index: 2;
-    pointer-events: none;
-  }
-
-  .ticker-track {
-    overflow: hidden;
-    flex: 1;
-    height: 100%;
-    display: flex;
-    align-items: center;
-  }
-
-  .ticker-inner {
-    display: flex;
-    align-items: center;
-    white-space: nowrap;
-    animation: scroll 38s linear infinite;
-  }
-
-  @keyframes scroll {
-    0%   { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
+    color: #000;
+    border-radius: 4px;
   }
 
   .ticker-item {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    padding: 0 36px;
-    border-right: 1px solid rgba(255,255,255,0.06);
+    gap: 12px;
     font-family: 'Courier New', monospace;
-    font-size: 15px;
   }
 
-  .t-name  { color: var(--text-muted); font-size: 12px; letter-spacing: 0.06em; }
-  .t-unit  { color: var(--gold-dim); font-size: 11px; }
-  .t-price { color: var(--text); font-weight: 600; letter-spacing: 0.04em; }
+  .t-name  { color: var(--text-muted); font-size: 16px; letter-spacing: 0.06em; }
+  .t-unit  { color: var(--gold-dim); font-size: 14px; }
+  .t-price { color: var(--text); font-size: 22px; font-weight: 700; letter-spacing: 0.04em; }
 
-  .t-change { font-size: 12px; display: flex; align-items: center; gap: 4px; }
+  .t-change { font-size: 16px; display: flex; align-items: center; gap: 4px; }
   .t-change.up   { color: var(--up); }
   .t-change.down { color: var(--down); }
   .t-change.flat { color: var(--text-muted); }
 
-  .t-dot { color: var(--gold-dim); margin: 0 8px; font-size: 10px; }
+  .divider {
+    width: 1px;
+    height: 30px;
+    background: rgba(255,255,255,0.12);
+    flex-shrink: 0;
+  }
 </style>
 </head>
 <body>
 
-<div class="ticker-bar">
-  <div class="ticker-label">Rates</div>
-  <div class="ticker-fade"></div>
-  <div class="ticker-track">
-    <div class="ticker-inner" id="ticker-inner"></div>
-  </div>
+<div class="ticker-bar" id="ticker-bar">
+  <!-- populated by JS -->
 </div>
 
 <script>
@@ -115,13 +82,12 @@
     const dir = n > 0 ? 'up' : n < 0 ? 'down' : 'flat';
     const arrow = n > 0 ? '▲' : n < 0 ? '▼' : '▬';
     return `
-      <span class="ticker-item">
+      <div class="ticker-item">
         <span class="t-name">${label}</span>
         <span class="t-unit">(${unit})</span>
         <span class="t-price">${price}</span>
         <span class="t-change ${dir}"><span>${arrow}</span><span>${changePct || '—'}</span></span>
-      </span>
-      <span class="t-dot">◆</span>`;
+      </div>`;
   }
 
   function fetchRates() {
@@ -139,9 +105,13 @@
           { label: 'Silver Dollar',        unit: '1 oz',      price: data.silver_rate,   changePct: data.silver_rate_change   },
         ];
 
-        const html = items.map(i => buildItem(i.label, i.unit, i.price, i.changePct)).join('');
-        const el = document.getElementById('ticker-inner');
-        if (el) el.innerHTML = html + html;
+        const divider = '<div class="divider"></div>';
+        const html = '<div class="ticker-label">Rates</div>' +
+          divider +
+          items.map(i => buildItem(i.label, i.unit, i.price, i.changePct)).join(divider);
+
+        const el = document.getElementById('ticker-bar');
+        if (el) el.innerHTML = html;
       })
       .catch(console.error);
   }
