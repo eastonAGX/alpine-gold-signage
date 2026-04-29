@@ -72,52 +72,51 @@
 </head>
 <body>
 
-<div class="ticker-bar" id="ticker-bar">
-  <!-- populated by JS -->
-</div>
+<div class="ticker-bar" id="ticker-bar"></div>
 
 <script>
   function buildItem(label, unit, price, changePct) {
-    const n = parseFloat((changePct || '0').replace('%', ''));
-    const dir = n > 0 ? 'up' : n < 0 ? 'down' : 'flat';
-    const arrow = n > 0 ? '▲' : n < 0 ? '▼' : '▬';
-    return `
-      <div class="ticker-item">
-        <span class="t-name">${label}</span>
-        <span class="t-unit">(${unit})</span>
-        <span class="t-price">${price}</span>
-        <span class="t-change ${dir}"><span>${arrow}</span><span>${changePct || '—'}</span></span>
-      </div>`;
+    var n = parseFloat((changePct || '0').replace('%', ''));
+    var dir = n > 0 ? 'up' : n < 0 ? 'down' : 'flat';
+    var arrow = n > 0 ? '\u25b2' : n < 0 ? '\u25bc' : '\u25ac';
+    return '<div class="ticker-item">'
+      + '<span class="t-name">' + label + '</span>'
+      + '<span class="t-unit">(' + unit + ')</span>'
+      + '<span class="t-price">' + price + '</span>'
+      + '<span class="t-change ' + dir + '"><span>' + arrow + '</span><span>' + (changePct || '\u2014') + '</span></span>'
+      + '</div>';
   }
 
   function fetchRates() {
     fetch('https://member.upma.org/api/public/rates?t=' + Date.now())
-      .then(r => r.json())
-      .then(data => {
-        const goldNum  = parseFloat((data.gold_rate || '0').replace(/[$,]/g, ''));
-        const goldSpot = '$' + (goldNum * 50).toLocaleString('en-US', { minimumFractionDigits: 2 });
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var goldNum = parseFloat((data.gold_rate || '0').replace(/[$,]/g, ''));
+        var goldSpot = '$' + (goldNum * 50).toLocaleString('en-US', { minimumFractionDigits: 2 });
 
-        const items = [
-          { label: 'Gold Spot',            unit: '1 oz',      price: goldSpot,           changePct: data.gold_rate_change     },
-          { label: 'US Minted Gold Coins', unit: '1 oz',      price: data.gold_rate,     changePct: data.gold_rate_change     },
-          { label: 'Gold Dollar',          unit: '1/50 oz',   price: data.gold_rate,     changePct: data.gold_rate_change     },
-          { label: 'Goldback',             unit: '1/1000 oz', price: data.goldback_rate, changePct: data.goldback_rate_change },
-          { label: 'Silver Dollar',        unit: '1 oz',      price: data.silver_rate,   changePct: data.silver_rate_change   },
+        var items = [
+          { label: 'Gold Spot',            unit: '1 oz',      price: goldSpot,            changePct: data.gold_rate_change      },
+          { label: 'US Minted Gold Coins', unit: '1 oz',      price: data.gold_rate,      changePct: data.gold_rate_change      },
+          { label: 'Gold Dollar',          unit: '1/50 oz',   price: data.gold_rate,      changePct: data.gold_rate_change      },
+          { label: 'Goldback',             unit: '1/1000 oz', price: data.goldback_rate,  changePct: data.goldback_rate_change  },
+          { label: 'Silver Dollar',        unit: '1 oz',      price: data.silver_rate,    changePct: data.silver_rate_change    }
         ];
 
-        const divider = '<div class="divider"></div>';
-        const html = '<div class="ticker-label">Rates</div>' +
-          divider +
-          items.map(i => buildItem(i.label, i.unit, i.price, i.changePct)).join(divider);
+        var divider = '<div class="divider"></div>';
+        var html = '<div class="ticker-label">Rates</div>' + divider;
+        for (var i = 0; i < items.length; i++) {
+          html += buildItem(items[i].label, items[i].unit, items[i].price, items[i].changePct);
+          if (i < items.length - 1) html += divider;
+        }
 
-        const el = document.getElementById('ticker-bar');
+        var el = document.getElementById('ticker-bar');
         if (el) el.innerHTML = html;
       })
-      .catch(console.error);
+      .catch(function(e) { console.error(e); });
   }
 
   fetchRates();
-  setInterval(fetchRates, 60 * 1000);
+  setInterval(fetchRates, 60000);
 </script>
 </body>
 </html>
