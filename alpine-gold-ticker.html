@@ -27,47 +27,83 @@
     display: flex;
     align-items: center;
     justify-content: space-around;
-    padding: 0 20px;
-    overflow: hidden;
+    padding: 0 40px;
+    gap: 10px;
   }
 
+  /* RATES badge on the left */
   .ticker-label {
     flex-shrink: 0;
-    padding: 6px 20px;
-    display: flex;
-    align-items: center;
+    padding: 10px 24px;
     background: var(--gold);
     font-family: 'Courier New', monospace;
-    font-size: 14px;
+    font-size: 18px;
     font-weight: 700;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     color: #000;
-    border-radius: 4px;
+    border-radius: 6px;
   }
 
+  /* Vertical divider */
+  .divider {
+    width: 1px;
+    height: 80px;
+    background: rgba(255,255,255,0.1);
+    flex-shrink: 0;
+  }
+
+  /* Each rate item */
   .ticker-item {
-    display: inline-flex;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
     font-family: 'Courier New', monospace;
+    flex: 1;
   }
 
-  .t-name  { color: var(--text-muted); font-size: 16px; letter-spacing: 0.06em; }
-  .t-unit  { color: var(--gold-dim); font-size: 14px; }
-  .t-price { color: var(--text); font-size: 22px; font-weight: 700; letter-spacing: 0.04em; }
+  /* Top row: name + unit */
+  .t-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
 
-  .t-change { font-size: 16px; display: flex; align-items: center; gap: 4px; }
+  .t-name {
+    color: var(--text-muted);
+    font-size: 18px;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+
+  .t-unit {
+    color: var(--gold-dim);
+    font-size: 14px;
+    white-space: nowrap;
+  }
+
+  /* Middle: price */
+  .t-price {
+    color: var(--text);
+    font-size: 38px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  /* Bottom: change */
+  .t-change {
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+
   .t-change.up   { color: var(--up); }
   .t-change.down { color: var(--down); }
   .t-change.flat { color: var(--text-muted); }
-
-  .divider {
-    width: 1px;
-    height: 30px;
-    background: rgba(255,255,255,0.12);
-    flex-shrink: 0;
-  }
 </style>
 </head>
 <body>
@@ -80,8 +116,10 @@
     var dir = n > 0 ? 'up' : n < 0 ? 'down' : 'flat';
     var arrow = n > 0 ? '\u25b2' : n < 0 ? '\u25bc' : '\u25ac';
     return '<div class="ticker-item">'
-      + '<span class="t-name">' + label + '</span>'
-      + '<span class="t-unit">(' + unit + ')</span>'
+      + '<div class="t-header">'
+      +   '<span class="t-name">' + label + '</span>'
+      +   '<span class="t-unit">(' + unit + ')</span>'
+      + '</div>'
       + '<span class="t-price">' + price + '</span>'
       + '<span class="t-change ' + dir + '"><span>' + arrow + '</span><span>' + (changePct || '\u2014') + '</span></span>'
       + '</div>';
@@ -95,11 +133,11 @@
         var goldSpot = '$' + (goldNum * 50).toLocaleString('en-US', { minimumFractionDigits: 2 });
 
         var items = [
-          { label: 'Gold Spot',            unit: '1 oz',      price: goldSpot,            changePct: data.gold_rate_change      },
-          { label: 'US Minted Gold Coins', unit: '1 oz',      price: data.gold_rate,      changePct: data.gold_rate_change      },
-          { label: 'Gold Dollar',          unit: '1/50 oz',   price: data.gold_rate,      changePct: data.gold_rate_change      },
-          { label: 'Goldback',             unit: '1/1000 oz', price: data.goldback_rate,  changePct: data.goldback_rate_change  },
-          { label: 'Silver Dollar',        unit: '1 oz',      price: data.silver_rate,    changePct: data.silver_rate_change    }
+          { label: 'Gold Spot',            unit: '1 oz',      price: goldSpot,           changePct: data.gold_rate_change     },
+          { label: 'US Minted Gold Coins', unit: '1 oz',      price: data.gold_rate,     changePct: data.gold_rate_change     },
+          { label: 'Gold Dollar',          unit: '1/50 oz',   price: data.gold_rate,     changePct: data.gold_rate_change     },
+          { label: 'Goldback',             unit: '1/1000 oz', price: data.goldback_rate, changePct: data.goldback_rate_change },
+          { label: 'Silver Dollar',        unit: '1 oz',      price: data.silver_rate,   changePct: data.silver_rate_change  }
         ];
 
         var divider = '<div class="divider"></div>';
