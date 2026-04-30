@@ -20,29 +20,44 @@
     height: 100%;
     overflow: hidden;
     background: var(--bg);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .top-bar {
+    width: 100%;
+    background: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 40px;
+    font-family: 'Courier New', monospace;
+  }
+
+  .top-bar-label {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #000;
+  }
+
+  .top-bar-date {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: #000;
+    opacity: 0.75;
   }
 
   .ticker-bar {
+    flex: 1;
     width: 100%;
-    height: 100%;
     display: flex;
     align-items: center;
     justify-content: space-around;
     padding: 0 40px;
     gap: 10px;
-  }
-
-  .ticker-label {
-    flex-shrink: 0;
-    padding: 10px 24px;
-    background: var(--gold);
-    font-family: 'Courier New', monospace;
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: #000;
-    border-radius: 6px;
   }
 
   .divider {
@@ -103,6 +118,10 @@
 </head>
 <body>
 
+<div class="top-bar">
+  <span class="top-bar-label">Rates</span>
+  <span class="top-bar-date" id="rates-date">Loading...</span>
+</div>
 <div class="ticker-bar" id="ticker-bar"></div>
 
 <script>
@@ -128,18 +147,21 @@
         var goldSpot = '$' + (goldNum * 50).toLocaleString('en-US', { minimumFractionDigits: 2 });
 
         var divider = '<div class="divider"></div>';
-        var html = '<div class="ticker-label">Rates</div>' + divider;
+        var html = '';
 
-        html += buildItem('US Minted Gold Coins', '1 oz',      goldSpot,            data.gold_rate_change);
+        html += buildItem('US Minted Gold Coins', '1 oz',      goldSpot,           data.gold_rate_change);
         html += divider;
-        html += buildItem('Gold Dollar',          '1/50 oz',   data.gold_rate,      data.gold_rate_change);
+        html += buildItem('Gold Dollar',          '1/50 oz',   data.gold_rate,     data.gold_rate_change);
         html += divider;
-        html += buildItem('Goldback',             '1/1000 oz', data.goldback_rate,  data.goldback_rate_change);
+        html += buildItem('Goldback',             '1/1000 oz', data.goldback_rate, data.goldback_rate_change);
         html += divider;
-        html += buildItem('Silver Dollar',        '1 oz',      data.silver_rate,    data.silver_rate_change);
+        html += buildItem('Silver Dollar',        '1 oz',      data.silver_rate,   data.silver_rate_change);
 
         var el = document.getElementById('ticker-bar');
         if (el) el.innerHTML = html;
+
+        var dateEl = document.getElementById('rates-date');
+        if (dateEl) dateEl.textContent = 'Updated: ' + data.day_of_rate;
       })
       .catch(function(e) { console.error(e); });
   }
