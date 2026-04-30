@@ -150,9 +150,9 @@
         html += divider;
         html += buildItem('Gold Dollar',          '1/50 oz',   data.gold_rate,     data.gold_rate_change);
         html += divider;
-        html += buildItem('Goldback',             '1/1000 oz', data.goldback_rate, data.goldback_rate_change);
-        html += divider;
         html += buildItem('Silver Dollar',        '1 oz',      data.silver_rate,   data.silver_rate_change);
+        html += divider;
+        html += buildItem('Goldback',             '1/1000 oz', data.goldback_rate, data.goldback_rate_change);
 
         var el = document.getElementById('ticker-bar');
         if (el) el.innerHTML = html;
