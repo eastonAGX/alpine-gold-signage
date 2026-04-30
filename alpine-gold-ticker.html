@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -10,7 +11,7 @@
     --gold-dim:   #a07830;
     --bg:         #273C3C;
     --text:       #EDE8DE;
-    --text-muted: #8FAAAA;
+    --text-muted: rgba(237,232,222,0.55);
     --up:         #4CAF7A;
     --down:       #E05252;
   }
@@ -22,32 +23,31 @@
     background: var(--bg);
     display: flex;
     flex-direction: column;
+    font-family: 'Lato', sans-serif;
   }
 
   .top-bar {
     width: 100%;
-    background: var(--gold);
+    padding: 14px 48px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 40px;
-    font-family: 'Courier New', monospace;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
   }
 
   .top-bar-label {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.25em;
     text-transform: uppercase;
-    color: #000;
+    color: var(--gold);
   }
 
   .top-bar-date {
     font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    color: #000;
-    opacity: 0.75;
+    font-weight: 400;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
   }
 
   .ticker-bar {
@@ -56,58 +56,57 @@
     display: flex;
     align-items: center;
     justify-content: space-around;
-    padding: 0 40px;
-    gap: 10px;
+    padding: 0 48px;
   }
 
   .divider {
     width: 1px;
-    height: 80px;
-    background: rgba(255,255,255,0.15);
+    align-self: stretch;
+    margin: 24px 0;
+    background: rgba(255,255,255,0.08);
     flex-shrink: 0;
   }
 
   .ticker-item {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    font-family: 'Courier New', monospace;
+    align-items: flex-start;
+    gap: 4px;
     flex: 1;
-  }
-
-  .t-header {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
+    padding: 0 32px;
   }
 
   .t-name {
     color: var(--text-muted);
-    font-size: 17px;
-    letter-spacing: 0.06em;
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
     white-space: nowrap;
   }
 
   .t-unit {
     color: var(--gold-dim);
-    font-size: 13px;
-    white-space: nowrap;
+    font-size: 12px;
+    font-weight: 400;
+    margin-left: 6px;
   }
 
   .t-price {
     color: var(--text);
-    font-size: 36px;
+    font-size: 42px;
     font-weight: 700;
-    letter-spacing: 0.02em;
+    letter-spacing: -0.01em;
     white-space: nowrap;
+    line-height: 1.1;
   }
 
   .t-change {
-    font-size: 17px;
+    font-size: 15px;
+    font-weight: 400;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
+    margin-top: 2px;
     white-space: nowrap;
   }
 
@@ -119,7 +118,7 @@
 <body>
 
 <div class="top-bar">
-  <span class="top-bar-label">Rates</span>
+  <span class="top-bar-label">Alpine Gold Rates</span>
   <span class="top-bar-date" id="rates-date">Loading...</span>
 </div>
 <div class="ticker-bar" id="ticker-bar"></div>
@@ -128,14 +127,11 @@
   function buildItem(label, unit, price, changePct) {
     var n = parseFloat((changePct || '0').replace('%', ''));
     var dir = n > 0 ? 'up' : n < 0 ? 'down' : 'flat';
-    var arrow = n > 0 ? '\u25b2' : n < 0 ? '\u25bc' : '\u25ac';
+    var arrow = n > 0 ? '▲' : n < 0 ? '▼' : '▬';
     return '<div class="ticker-item">'
-      + '<div class="t-header">'
-      +   '<span class="t-name">' + label + '</span>'
-      +   '<span class="t-unit">(' + unit + ')</span>'
-      + '</div>'
+      + '<div><span class="t-name">' + label + '</span><span class="t-unit">(' + unit + ')</span></div>'
       + '<span class="t-price">' + price + '</span>'
-      + '<span class="t-change ' + dir + '"><span>' + arrow + '</span><span>' + (changePct || '\u2014') + '</span></span>'
+      + '<span class="t-change ' + dir + '">' + arrow + ' ' + (changePct || '—') + '</span>'
       + '</div>';
   }
 
